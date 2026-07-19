@@ -29,8 +29,8 @@
   port = 8888
 
 [template.environment]
-  DATABASE_URL = "Pooled Supabase Postgres connection string"
-  DIRECT_URL = "Direct Supabase Postgres connection string"
+  DATABASE_URL = "Pooled Neon Postgres connection string"
+  DIRECT_URL = "Direct Neon Postgres connection string"
   NEXTAUTH_SECRET = "Session encryption secret"
   NEXTAUTH_URL = "Production site URL"
   PAYSTACK_SECRET_KEY = "Paystack secret key (test or live)"

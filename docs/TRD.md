@@ -9,7 +9,7 @@
 ## 1. Architecture Overview
 
 - **Framework:** Next.js (App Router), single codebase serving both the customer storefront and the admin interface (route-separated, e.g. `/admin/*` behind auth middleware).
-- **Database:** PostgreSQL, hosted on Supabase (free tier to start). Locked — no longer evaluating Neon as an alternative.
+- **Database:** PostgreSQL, hosted on Neon (free tier to start), provisioned via `npx neonctl@latest init`. Locked — no longer Supabase.
 - **Hosting:** Netlify (free tier to start), using the official Next.js Runtime (`@netlify/plugin-nextjs`) for App Router, ISR, Image Optimization, and Middleware support — declared in `netlify.toml`. Locked — no longer Vercel.
 - **Transactional email:** Resend, using React Email for templates.
 - **Payments:** Paystack (Cards, Bank Transfer, USSD as available in Nigeria).
@@ -116,9 +116,9 @@ This requires a human click on either end every time — it is not autonomous me
 
 ## 7. Environments & Deployment
 
-- **Dev:** local Next.js + a separate Supabase project (not just a branch of production) + Paystack **test mode** keys — see Section 8.8 on environment isolation for why this must be a fully separate project, not a schema/branch inside the production database.
-- **Staging:** Netlify Deploy Previews (from the `develop` branch and PRs) point at the same dev Supabase project, or a third dedicated staging project if the team grows beyond Luwa alone.
-- **Production:** Netlify deployment (deploying `main` via Netlify's GitHub integration) + production Supabase project + Paystack **live** keys + Resend production domain (requires domain verification, including SPF/DKIM/DMARC records, once Luwa has a domain).
+- **Dev:** local Next.js + a dedicated Neon **branch** (Neon's copy-on-write branching replaces the "separate project" isolation model — see Section 8.8) + Paystack **test mode** keys.
+- **Staging:** Netlify Deploy Previews (from the `develop` branch and PRs) point at a Neon dev/staging branch, ideally a fresh branch per PR (Neon's GitHub integration or `neonctl branches create` in CI can automate this later).
+- **Production:** Netlify deployment (deploying `main` via Netlify's GitHub integration) + Neon's production branch (`main` in Neon's default branch naming — worth renaming for clarity so it isn't confused with the git branch of the same name) + Paystack **live** keys + Resend production domain (requires domain verification, including SPF/DKIM/DMARC records, once Luwa has a domain).
 - Environment variables (Paystack secret key, Resend API key, DB connection string, auth secret, Cloudinary/Upstash/Sentry credentials) managed via Netlify Site settings > Environment variables — never committed to source. See `.env.example` for the full list.
 
 ## 8. Reliability, Security & Operations
@@ -147,7 +147,7 @@ This section covers everything that keeps the site trustworthy once it's live, a
 
 ### 8.5 Load balancing & scaling
 - Netlify Functions (what Next.js API routes/server rendering compile down to on Netlify, AWS Lambda under the hood) auto-scale horizontally with no configuration.
-- The real ceiling at this architecture's scale is Postgres connection limits, not compute — `prisma/schema.prisma` is configured with a pooled `DATABASE_URL` (via Supabase's connection pooler, Supavisor, in transaction mode) for runtime queries and a separate unpooled `DIRECT_URL` (Supabase's direct connection string) for migrations, which is what prevents serverless function bursts from exhausting the database's connection limit. This matters at least as much on Netlify Functions as it would anywhere else — possibly more, given Lambda-style cold starts can multiply concurrent connection attempts.
+- The real ceiling at this architecture's scale is Postgres connection limits, not compute — `prisma/schema.prisma` is configured with a pooled `DATABASE_URL` (Neon's PgBouncer-compatible pooled endpoint, hostname suffixed `-pooler`) for runtime queries and a separate unpooled `DIRECT_URL` (Neon's direct endpoint) for migrations, which is what prevents serverless function bursts from exhausting the database's connection limit. This matters at least as much on Netlify Functions as it would anywhere else — possibly more, given Lambda-style cold starts can multiply concurrent connection attempts.
 
 ### 8.6 Error tracking & logging
 - Sentry is wired into client, server, and edge runtimes (`sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`), and `next.config.js` uploads source maps at build time.
@@ -156,13 +156,14 @@ This section covers everything that keeps the site trustworthy once it's live, a
 
 ### 8.7 Availability & disaster recovery
 - `GET /api/health` checks both the app and the database connection — point an external uptime monitor (UptimeRobot or Better Uptime, both have usable free tiers) at it and alert on non-200 responses.
-- Supabase free tier: daily backups retained 7 days, restorable via the dashboard. No point-in-time recovery on free tier — a mid-day incident can lose up to a day of data. PITR is a paid-tier upgrade (Supabase Pro), worth budgeting for once real order volume exists.
+- Neon free tier: point-in-time restore via branching, but only across a limited history window (verify the current retention window in the Neon console — this has changed across plan revisions and is shorter than a paid plan's). A restore is done by creating a new branch from a timestamp/LSN before the incident, then pointing the app at it — conceptually different from Supabase's "restore a snapshot" model, but same effect: a mid-day incident can still lose data outside that window.
 - The restore process is documented in `docs/DISASTER_RECOVERY.md` and should be run through once in a test environment before launch — an untested restore process isn't a real disaster recovery plan.
 - Multi-region failover and zero-data-loss guarantees are explicitly out of scope at this stage — not justified for a single-owner store on free-tier infrastructure.
 - **Deployment rollback** (distinct from data recovery): Netlify keeps every prior deploy and supports instant rollback (Deploys list > select a previous deploy > "Publish deploy") if a bad release reaches production — cheaper and faster than a database restore, and the first thing to reach for if a release breaks the site without touching data.
 
 ### 8.8 Environment isolation
-- Dev, staging (Netlify Deploy Previews), and production must use **separate Supabase projects**, not schemas or branches inside one project. A bug in a preview deployment (or a developer testing locally) must never be able to touch real customer orders or payment records. Free tier allows up to 2 Supabase projects at no cost — one for dev/staging combined, one for production, is the minimum viable split.
+- Dev, staging (Netlify Deploy Previews), and production must use **separate Neon branches** at minimum (Neon's copy-on-write branching is the mechanism here, replacing Supabase's "separate project" isolation model). A bug in a preview deployment (or a developer testing locally) must never be able to touch real customer orders or payment records — the production branch's `DATABASE_URL`/`DIRECT_URL` must never appear in a dev/preview environment's config.
+- Branches are cheap on Neon's free tier, so the stronger version of this is a fresh branch per PR (auto-created from Neon's GitHub integration, auto-deleted on merge) rather than one shared long-lived dev branch — worth adopting once Phase 1 is further along; a single shared dev branch is the acceptable starting point.
 - Paystack similarly has fully separate **test mode** and **live mode** keys — dev/staging always use test mode, production always uses live mode. Mixing these up (e.g. live keys in a preview deployment) is a real and easy mistake to make; worth a startup check that fails loudly if `NODE_ENV !== 'production'` and a live Paystack key is detected.
 
 ### 8.9 Idempotency & payment reconciliation
@@ -178,13 +179,13 @@ Installment due dates, reminder emails, and the daily auto-charge cron all need 
 CI currently runs a placeholder test job with nothing to execute. For a site moving real money, the minimum bar before Phase 2 (installments) ships is: unit tests on the installment-splitting/scheduling math, an integration test that simulates a Paystack webhook hitting the handler twice (proving 8.9's idempotency actually holds), and an end-to-end test (e.g. Playwright) covering the full checkout path. "It built successfully" (what CI currently checks) is not the same as "the checkout flow works."
 
 ### 8.12 Account-level security (the consoles, not just the app)
-Everything above protects the application. Equally important and easy to overlook: 2FA enabled on the actual Netlify, Supabase, GitHub, Cloudinary, Resend, and Paystack dashboard accounts themselves. A compromised login to any one of these consoles is a more direct route to real money or customer data than any application-layer vulnerability — and unlike the app's own admin 2FA (docs/SECURITY.md), this one costs nothing and takes ten minutes per service.
+Everything above protects the application. Equally important and easy to overlook: 2FA enabled on the actual Netlify, Neon, GitHub, Cloudinary, Resend, and Paystack dashboard accounts themselves. A compromised login to any one of these consoles is a more direct route to real money or customer data than any application-layer vulnerability — and unlike the app's own admin 2FA (docs/SECURITY.md), this one costs nothing and takes ten minutes per service.
 
 ### 8.13 Free-tier cost/usage monitoring
 Every service in this stack is free-tier-to-start, which means every service also has a cliff — and Netlify's is the sharpest one in this stack to watch closely:
 
 - **Netlify (accounts created from September 2025 onward, which this one is):** moved to a credit-based free plan — 300 credits/month, no overage, no auto-recharge. Roughly: ~15GB of bandwidth, ~20 production deploys, function compute at 10 credits/GB-hour with a **10-second execution timeout per function**, 1M edge function invocations included separately, 1 concurrent build. Critically: **hit the cap and every site on the account pauses until the next billing month, with no exceptions.** For an installment-payments site, that failure mode is not cosmetic — it means checkout itself goes down, not just slow performance. The 10-second function timeout is also worth flagging now: if the installment auto-charge cron or the Paystack reconciliation job ever needs to process many records in one run, it needs to be built to finish well under 10 seconds per invocation (batch/paginate rather than one long-running function), not assumed to have Vercel-style longer serverless limits.
-- Supabase: database size and row limits on free tier.
+- Neon: free tier is usage-based (compute hours + storage), not a flat cap like Supabase's — compute auto-suspends after inactivity (cold-start latency on the next request) and storage/compute-hour limits reset monthly; check the Neon console's usage page rather than assuming a fixed ceiling.
 - Resend: 3,000 emails/month.
 - Cloudinary: storage/bandwidth limits.
 - Upstash: request limits.
@@ -198,8 +199,8 @@ Not an engineering task, but blocks launch regardless: Terms of Service, Privacy
 
 | Phase | Systems touched |
 |---|---|
-| 0 (done) | Repo scaffold: git/GitHub, CI (lint/typecheck/build), rate limiting, security headers, Prisma schema + pooled DB connection (Supabase), Sentry, health-check endpoint, backup/DR documentation |
-| 0.5 (before Phase 1 build starts) | Separate dev/staging Supabase project provisioned, 2FA enabled on all provider dashboards, ToS/Privacy/Returns policy drafted, usage-alert thresholds set per provider |
+| 0 (done) | Repo scaffold: git/GitHub, CI (lint/typecheck/build), rate limiting, security headers, Prisma schema + pooled DB connection (Neon), Sentry, health-check endpoint, backup/DR documentation |
+| 0.5 (before Phase 1 build starts) | Dev/staging Neon branch provisioned, 2FA enabled on all provider dashboards, ToS/Privacy/Returns policy drafted, usage-alert thresholds set per provider |
 | 1 | Auth, Product/Category/Variant, Cart, Order (one-time payment only), Paystack one-time checkout (test-mode keys), Resend order-confirmation email, Cloudinary product image upload, first Playwright checkout e2e test |
 | 2 | PaymentPlan, Installment, PaystackAuthorization, scheduled cron jobs (WAT-aware), webhook + cron idempotency, weekly Paystack reconciliation job, Resend reminder templates, WhatsApp link generation |
 | 3 | AnalyticsEvent + tracking client, admin dashboard (revenue/profit/inventory/customers/analytics), category management UI, admin action audit log |

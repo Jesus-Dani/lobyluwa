@@ -14,7 +14,7 @@ See [`docs/`](./docs) for the full product and technical specification:
 ## Tech stack
 
 - **Framework:** Next.js (App Router, TypeScript)
-- **Database:** PostgreSQL via Supabase + Prisma
+- **Database:** PostgreSQL via Neon + Prisma
 - **Auth:** next-auth
 - **Payments:** Paystack
 - **Transactional email:** Resend

@@ -1,0 +1,57 @@
+name: Database Migration
+
+# Manually triggered from the Actions tab. Exists because Prisma Migrate
+# needs a direct TCP connection to Postgres (port 5432), which is blocked
+# on some local networks/ISPs — GitHub's runners have unrestricted egress,
+# so this is the reliable place to run migrations regardless of where the
+# person triggering it is developing from.
+#
+# Leave "migration_name" blank to apply already-committed migrations
+# (`prisma migrate deploy`). Fill it in to generate a new migration from
+# the current schema.prisma (`prisma migrate dev`) and commit the result.
+on:
+  workflow_dispatch:
+    inputs:
+      migration_name:
+        description: "New migration name (leave blank to just deploy pending migrations)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Create migration
+        if: ${{ github.event.inputs.migration_name != '' }}
+        run: npx prisma migrate dev --name "${{ github.event.inputs.migration_name }}"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Deploy pending migrations
+        if: ${{ github.event.inputs.migration_name == '' }}
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Commit generated migration files
+        if: ${{ github.event.inputs.migration_name != '' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add prisma/migrations
+          git diff --cached --quiet || git commit -m "Add migration: ${{ github.event.inputs.migration_name }}"
+          git push

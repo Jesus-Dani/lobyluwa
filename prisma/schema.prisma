@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // Pooled connection (PgBouncer/Supabase Pooler or Neon's pooled endpoint).
+  // Pooled connection (Neon's PgBouncer-compatible pooled endpoint, `-pooler` hostname).
   // Serverless functions open/close connections constantly — without a
   // pooler in front of Postgres, traffic spikes exhaust the DB's
   // connection limit and the whole site goes down. This is the load-

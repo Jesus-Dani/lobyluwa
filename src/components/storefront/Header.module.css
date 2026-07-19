@@ -1,0 +1,123 @@
+.header {
+  background: var(--white);
+  border-bottom: 1px solid #f1e7ea;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.logoMark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.logoText .lo {
+  font-family: var(--font-cormorant), serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--charcoal);
+  letter-spacing: 0.02em;
+}
+
+.logoText .by {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  color: var(--chocolate);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.nav ul {
+  display: flex;
+  gap: 34px;
+}
+
+.nav a {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--charcoal);
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.nav a:hover {
+  color: var(--burgundy);
+  border-color: var(--burgundy);
+}
+
+.headerIcons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.iconBtn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: relative;
+  color: var(--charcoal);
+  transition: background 0.2s;
+}
+
+.iconBtn:hover {
+  background: var(--soft-pink);
+  color: var(--burgundy);
+}
+
+.badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--accent);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchForm input {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--soft-pink);
+  font-size: 13px;
+  width: 200px;
+}
+
+.searchForm input:focus {
+  outline: none;
+  border-color: var(--burgundy);
+}
+
+@media (max-width: 960px) {
+  .nav {
+    display: none;
+  }
+}

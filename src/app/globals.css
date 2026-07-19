@@ -1,3 +1,13 @@
+:root {
+  --white: #ffffff;
+  --soft-pink: #ffe5ec;
+  --burgundy: #660019;
+  --chocolate: #442913;
+  --charcoal: #3b3b3b;
+  --accent: #fb6f92;
+  --radius: 12px;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,4 +17,59 @@
 html,
 body {
   height: 100%;
+}
+
+body {
+  color: var(--charcoal);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+@media (max-width: 960px) {
+  .container {
+    padding: 0 20px;
+  }
+}
+
+/* Printable order receipts (src/app/(storefront)/account/orders/[id]) shouldn't include chrome. */
+@media print {
+  header,
+  footer {
+    display: none;
+  }
 }

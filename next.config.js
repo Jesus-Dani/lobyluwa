@@ -2,6 +2,11 @@ const { withSentryConfig } = require("@sentry/nextjs");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // `ws` (used by @neondatabase/serverless for the pooled/WebSocket
+  // connection — see src/lib/prisma.ts) breaks when webpacked into the
+  // server bundle; keeping it external makes Next.js `require()` it
+  // normally at runtime instead.
+  serverExternalPackages: ["ws"],
   images: {
     // Product images are served from Cloudinary — restrict remote image
     // loading to that host only.

@@ -1,0 +1,29 @@
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 32px 100px;
+}
+
+.page h1 {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--burgundy);
+  margin-bottom: 20px;
+}
+
+.page p {
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.85;
+}
+
+.contactList {
+  margin-top: 16px;
+  list-style: none;
+}
+
+.contactList li {
+  font-size: 15px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1e7ea;
+}

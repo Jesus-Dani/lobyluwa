@@ -1,0 +1,90 @@
+.productCard {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid #f1e7ea;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.productCard:hover {
+  box-shadow: 0 16px 32px rgba(59, 59, 59, 0.08);
+  transform: translateY(-3px);
+}
+
+.productMedia {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(150deg, #f6efe9, #efe0d4);
+}
+
+.productMedia svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  stroke: var(--chocolate);
+  opacity: 0.55;
+}
+
+.wishlistHeart {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  z-index: 1;
+}
+
+.wishlistHeart svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--burgundy);
+}
+
+.productInfo {
+  padding: 16px;
+}
+
+.productInfo h4 {
+  font-size: 14.5px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.price {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--burgundy);
+  margin-bottom: 12px;
+}
+
+.quickAdd {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--charcoal);
+  color: var(--white);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: background 0.2s;
+}
+
+.quickAdd:hover:not(:disabled) {
+  background: var(--burgundy);
+}
+
+.quickAdd:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

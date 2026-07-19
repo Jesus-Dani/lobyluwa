@@ -1,0 +1,133 @@
+.page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+
+.page h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--burgundy);
+  margin-bottom: 32px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.formSection h2 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+.hint {
+  font-size: 13px;
+  opacity: 0.6;
+  margin-bottom: 10px;
+}
+
+.addressOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #f1e7ea;
+}
+
+.newAddressForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.newAddressForm input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e9d9dd;
+  font-size: 14px;
+}
+
+.phoneInput {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e9d9dd;
+  font-size: 14px;
+}
+
+.summary {
+  border: 1px solid #f1e7ea;
+  border-radius: 16px;
+  padding: 28px;
+  position: sticky;
+  top: 100px;
+}
+
+.summary h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  margin-bottom: 10px;
+  opacity: 0.85;
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 800;
+  margin: 16px 0 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f1e7ea;
+}
+
+.payButton {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--burgundy);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.payButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  background: #fdecef;
+  color: var(--burgundy);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .newAddressForm {
+    grid-template-columns: 1fr;
+  }
+}

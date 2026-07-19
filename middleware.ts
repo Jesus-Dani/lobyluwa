@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { getToken } from "next-auth/jwt";
 
 /**
  * Rate limiting for auth and payment-adjacent routes.
@@ -38,7 +39,9 @@ const paymentLimiter = redis
     })
   : null;
 
-const AUTH_PATHS = ["/api/auth/login", "/api/auth/register", "/api/auth/reset-password"];
+// next-auth v4's actual sign-in routes are /api/auth/signin and
+// /api/auth/callback/* — /api/auth/register is our own custom route.
+const AUTH_PATHS = ["/api/auth/signin", "/api/auth/callback", "/api/auth/register"];
 const PAYMENT_PATHS = ["/api/checkout", "/api/installments", "/api/webhooks/paystack"];
 
 function matchesPrefix(pathname: string, prefixes: string[]) {
@@ -48,6 +51,18 @@ function matchesPrefix(pathname: string, prefixes: string[]) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+
+  // Admin routes are not just unlinked from customer-facing nav (see
+  // docs/TRD.md section 6) — they're actively gated here so a guessed
+  // URL isn't enough to reach them.
+  if (pathname.startsWith("/admin")) {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    if (!token || token.role !== "ADMIN") {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
 
   let limiter: Ratelimit | null = null;
   if (matchesPrefix(pathname, AUTH_PATHS)) limiter = authLimiter;
@@ -74,5 +89,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/auth/:path*", "/api/checkout/:path*", "/api/installments/:path*", "/api/webhooks/:path*"],
+  matcher: [
+    "/api/auth/:path*",
+    "/api/checkout/:path*",
+    "/api/installments/:path*",
+    "/api/webhooks/:path*",
+    "/admin/:path*",
+  ],
 };

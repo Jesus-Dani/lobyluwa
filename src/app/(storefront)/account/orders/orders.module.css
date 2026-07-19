@@ -1,0 +1,91 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.orderRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #f1e7ea;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: box-shadow 0.2s;
+}
+
+.orderRow:hover {
+  box-shadow: 0 8px 20px rgba(59, 59, 59, 0.06);
+}
+
+.date {
+  display: block;
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+.status {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #f1e7ea;
+  width: fit-content;
+}
+
+.paid {
+  background: #e3f5e9;
+  color: #1a7a3e;
+}
+
+.pending_payment {
+  background: #fdf1e0;
+  color: #a15c00;
+}
+
+.at_risk {
+  background: #fdecef;
+  color: var(--burgundy);
+}
+
+.receiptMeta {
+  opacity: 0.65;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.receipt {
+  border: 1px solid #f1e7ea;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 32px;
+}
+
+.receiptRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.receiptTotal {
+  font-weight: 800;
+  border-top: 1px solid #f1e7ea;
+  margin-top: 8px;
+  padding-top: 14px;
+}
+
+.deliveryBlock h2 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.deliveryBlock p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}

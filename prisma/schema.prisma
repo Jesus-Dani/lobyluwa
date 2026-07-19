@@ -2,7 +2,8 @@
 // Mirrors the data model defined in docs/TRD.md.
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -83,6 +84,7 @@ model Category {
 model Product {
   id          String           @id @default(cuid())
   name        String
+  slug        String           @unique
   description String
   category    Category         @relation(fields: [categoryId], references: [id])
   categoryId  String
@@ -92,6 +94,11 @@ model Product {
   // the actual image bytes/CDN delivery.
   images      String[]
   status      String           @default("active") // active | archived
+  // Admin-taggable flag surfaced as the "Best Sellers" filtered view —
+  // there's no real sales history yet to compute this from (see TRD's
+  // note that New Arrivals/Best Sellers "may be computed/tagged rather
+  // than manually assigned").
+  featured    Boolean          @default(false)
   variants    ProductVariant[]
   wishlistedBy WishlistItem[]
   createdAt   DateTime         @default(now())

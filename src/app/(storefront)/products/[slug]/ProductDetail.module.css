@@ -1,0 +1,141 @@
+.page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+}
+
+.mainImage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(150deg, #f6efe9, #efe0d4);
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder svg {
+  width: 120px;
+  height: 120px;
+  stroke: var(--chocolate);
+  opacity: 0.4;
+}
+
+.category {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.info h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--burgundy);
+  margin-bottom: 12px;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--charcoal);
+  margin-bottom: 20px;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.8;
+  margin-bottom: 28px;
+}
+
+.variants {
+  margin-bottom: 32px;
+}
+
+.variantsLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.variantOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.variantOption {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #e9d9dd;
+  font-size: 13px;
+  font-weight: 600;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.variantOption:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.variantSelected {
+  border-color: var(--burgundy);
+  background: var(--soft-pink);
+  color: var(--burgundy);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.addToCart {
+  flex: 1;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--burgundy);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.addToCart:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wishlistBtn {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--burgundy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wishlistBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

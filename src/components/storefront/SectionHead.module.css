@@ -1,0 +1,22 @@
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+  margin-bottom: 28px;
+}
+
+.sectionHead h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--burgundy);
+}
+
+.sectionHead a {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--charcoal);
+  border-bottom: 1.5px solid var(--charcoal);
+}

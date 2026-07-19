@@ -1,0 +1,88 @@
+.newsletter {
+  background: var(--soft-pink);
+  padding: 56px 0;
+}
+
+.newsletterInner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.newsletterLeft {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 460px;
+}
+
+.mailIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mailIcon svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--burgundy);
+}
+
+.newsletterInner h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--burgundy);
+}
+
+.newsletterInner p {
+  font-size: 13.5px;
+  opacity: 0.75;
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  max-width: 440px;
+}
+
+.newsletterForm input {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid #e9c9d3;
+  font-size: 14px;
+  background: var(--white);
+}
+
+.newsletterForm button {
+  background: var(--accent);
+  color: var(--white);
+  padding: 14px 26px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.newsletterForm button:hover {
+  background: var(--burgundy);
+}
+
+.thanks {
+  font-weight: 700;
+  color: var(--burgundy);
+}

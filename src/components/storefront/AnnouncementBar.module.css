@@ -1,0 +1,15 @@
+.announce {
+  background: var(--burgundy);
+  color: var(--white);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 10px 16px;
+}
+
+.announce span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}

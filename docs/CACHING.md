@@ -1,7 +1,7 @@
 # Caching & CDN Strategy
 
 ## Static assets
-Handled automatically by Vercel's edge network — JS/CSS bundles, fonts, and any static files are cached at edge locations globally with no configuration needed. This part requires no work.
+Handled automatically by Netlify's global CDN — JS/CSS bundles, fonts, and any static files are cached at edge locations globally with no configuration needed. This part requires no work.
 
 ## Product images
 Served directly from Cloudinary, which has its own CDN. Next.js `<Image>` is configured (see `next.config.js`) to fetch from `res.cloudinary.com` — Cloudinary handles resizing/format negotiation and caching, we don't proxy image bytes through our own server.

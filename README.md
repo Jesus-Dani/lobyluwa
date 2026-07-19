@@ -14,14 +14,14 @@ See [`docs/`](./docs) for the full product and technical specification:
 ## Tech stack
 
 - **Framework:** Next.js (App Router, TypeScript)
-- **Database:** PostgreSQL (Supabase or Neon) via Prisma
+- **Database:** PostgreSQL via Supabase + Prisma
 - **Auth:** next-auth
 - **Payments:** Paystack
 - **Transactional email:** Resend
 - **Image hosting:** Cloudinary
 - **Rate limiting:** Upstash Redis
 - **Error tracking:** Sentry
-- **Hosting:** Vercel
+- **Hosting:** Netlify (via `@netlify/plugin-nextjs`, see `netlify.toml`)
 
 ## Getting started
 
@@ -65,10 +65,10 @@ See `.env.example` for the full list. At minimum, local development needs:
 
 ## Branching & deployment
 
-- `main` — production. Every push auto-deploys via Vercel's GitHub integration.
-- `develop` — staging/integration branch for work in progress.
+- `main` — production. Every push auto-deploys via Netlify's GitHub integration (build config in `netlify.toml`).
+- `develop` — staging/integration branch; Netlify Deploy Previews are generated for PRs against it.
 - Feature branches → PR into `develop` → PR into `main`.
-- `.github/workflows/ci.yml` runs lint, typecheck, and build on every PR and push — this must pass before merging.
+- `.github/workflows/ci.yml` runs lint, typecheck, and build on every PR and push — this must pass before merging. Netlify runs its own build in parallel; both must be green before a deploy is trusted.
 
 ## Monitoring
 

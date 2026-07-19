@@ -1,7 +1,7 @@
 name: CI
 
 # Runs on every PR and every push to main. This is the gate that stops a
-# broken change from reaching production — Vercel will auto-deploy
+# broken change from reaching production — Netlify will auto-deploy
 # whatever lands on `main`, so this workflow passing is the only thing
 # standing between a bug and the live site.
 on:

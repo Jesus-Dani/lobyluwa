@@ -37,8 +37,8 @@ Thumbs.db
 .idea/
 *.swp
 
-# Vercel
-.vercel
+# Netlify
+.netlify
 
 # Sentry
 .sentryclirc
